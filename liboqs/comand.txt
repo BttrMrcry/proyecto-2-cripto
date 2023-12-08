@@ -1,0 +1,1 @@
+gcc -o main_sig ../Documents/Criptografia/proyecto-2-cripto/liboqs/main.c -I build/include -L build/lib -loqs
