@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h> 
 
 #include <oqs/oqs.h>
 
@@ -21,36 +22,51 @@ static OQS_STATUS dilithium3_sig(char *msg) {
 	size_t message_len = strlen(msg);
     uint8_t message[message_len];
 	size_t signature_len;
+	clock_t t;
+	clock_t v;
 
 	// let's create a random test message to sign
 	//OQS_randombytes(message, message_len);
 
-	rc = OQS_SIG_dilithium_2_keypair(public_key, secret_key);
+	rc = OQS_SIG_dilithium_3_keypair(public_key, secret_key);
 	if (rc != OQS_SUCCESS) {
-		fprintf(stderr, "ERROR: OQS_SIG_dilithium_2_keypair failed!\n");
-		cleanup_stack(secret_key, OQS_SIG_dilithium_2_length_secret_key);
+		fprintf(stderr, "ERROR: OQS_SIG_dilithium_3_keypair failed!\n");
+		cleanup_stack(secret_key, OQS_SIG_dilithium_3_length_secret_key);
 		return OQS_ERROR;
 	}
-	rc = OQS_SIG_dilithium_2_sign(signature, &signature_len, message, message_len, secret_key);
+	
+    t = clock(); 
+
+	rc = OQS_SIG_dilithium_3_sign(signature, &signature_len, message, message_len, secret_key);
 	if (rc != OQS_SUCCESS) {
-		fprintf(stderr, "ERROR: OQS_SIG_dilithium_2_sign failed!\n");
-		cleanup_stack(secret_key, OQS_SIG_dilithium_2_length_secret_key);
-		return OQS_ERROR;
-	}
-	rc = OQS_SIG_dilithium_2_verify(message, message_len, signature, signature_len, public_key);
-	if (rc != OQS_SUCCESS) {
-		fprintf(stderr, "ERROR: OQS_SIG_dilithium_2_verify failed!\n");
-		cleanup_stack(secret_key, OQS_SIG_dilithium_2_length_secret_key);
+		fprintf(stderr, "ERROR: OQS_SIG_dilithium_3_sign failed!\n");
+		cleanup_stack(secret_key, OQS_SIG_dilithium_3_length_secret_key);
 		return OQS_ERROR;
 	}
 
-	printf("[example_stack] OQS_SIG_dilithium_2 operations completed.\n");
-	cleanup_stack(secret_key, OQS_SIG_dilithium_2_length_secret_key);
+	t = clock() - t; 
+	double time_taken = ((double)t)/CLOCKS_PER_SEC;
+	printf("Dilithium took %f seconds to sign \n", time_taken); 
+
+	v = clock();
+	rc = OQS_SIG_dilithium_3_verify(message, message_len, signature, signature_len, public_key);
+	if (rc != OQS_SUCCESS) {
+		fprintf(stderr, "ERROR: OQS_SIG_dilithium_3_verify failed!\n");
+		cleanup_stack(secret_key, OQS_SIG_dilithium_3_length_secret_key);
+		return OQS_ERROR;
+	}
+
+	v = clock() - v; 
+	time_taken = ((double)v)/CLOCKS_PER_SEC;
+	printf("Dilithium took %f seconds to verify \n", time_taken); 
+	
+	printf("[example_stack] OQS_SIG_dilithium_3 operations completed.\n");
+	cleanup_stack(secret_key, OQS_SIG_dilithium_3_length_secret_key);
 	return OQS_SUCCESS; // success!
 
 #else
 
-	printf("[example_stack] OQS_SIG_dilithium_2 was not enabled at compile-time.\n");
+	printf("[example_stack] OQS_SIG_dilithium_3 was not enabled at compile-time.\n");
 	return OQS_ERROR;
 
 #endif
@@ -88,7 +104,6 @@ int main(void) {
 	} else {
 		return EXIT_FAILURE;
 	}
-
 }
 
 void cleanup_stack(uint8_t *secret_key, size_t secret_key_len) {
