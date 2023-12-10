@@ -70,11 +70,12 @@ int KyberExecution() {
     double decTime = (double(t1-t0)/CLOCKS_PER_SEC);
 
     if (dec_shared_key != kem_result.shared_key()) {
-        std::cerr << "Shared key differ\n";
+        std::cerr << "Shared key differ\n" << std::endl; 
     } else {
-        std::cerr << "Shared keys are the same";
+        std::cerr << "Shared keys are the same" << std::endl;
     }
     
+    std::cout << "Kyber End" << std::endl;
     std::cout << "Encryption Time: " << encTime << std::endl;
     std::cout << "Decryption Time: " << decTime << std::endl;
 
@@ -100,11 +101,12 @@ int DilithiumExecution(char * message) {
    auto verifier = Botan::PK_Verifier(pub_key, "");
    t0 = clock();
    verifier.update(message);
-   std::cout << std::endl << "is " << (verifier.check_signature(signature) ? "valid" : "invalid") << std::endl;
+   std::cout << std::endl << "is " << (verifier.check_signature(signature) ? "Valid" : "Invalid") << std::endl;
    t1 = clock();
 
    double verificationTime = (double(t1-t0)/CLOCKS_PER_SEC);
 
+   std::cout << "Dilithium End" << std::endl;
    std::cout << "Sign Time: " << signTime << std::endl;
    std::cout << "Verification Time: " << verificationTime << std::endl;
 
@@ -130,11 +132,12 @@ int SphincsPlusExecution(char * message) {
     auto verifier = Botan::PK_Verifier(*priv_key.public_key(), params.algorithm_identifier());
     t0 = clock();
     verifier.update(message);
-    std::cout << std::endl << "is " << (verifier.check_signature(signature) ? "valid" : "invalid") << std::endl;
+    std::cout << std::endl << "Is " << (verifier.check_signature(signature) ? "valid" : "invalid") << std::endl;
     t1 = clock();
 
     double verificationTime = (double(t1-t0)/CLOCKS_PER_SEC);
 
+    std::cout << "Sphincs+ End" << std::endl;
     std::cout << "Sign Time: " << signTime << std::endl;
     std::cout << "Verification Time: " << verificationTime << std::endl;
 
