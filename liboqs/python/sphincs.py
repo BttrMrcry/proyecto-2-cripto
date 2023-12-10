@@ -5,16 +5,8 @@ import time
 from pprint import pprint
 
 #######################################################################
-# signature example
+# sphincs+ example
 #######################################################################
-
-# Imprime la versión de liboqs y liboqs-python
-print("liboqs version:", oqs.oqs_version())
-print("liboqs-python version:", oqs.oqs_python_version())
-print("Enabled signature mechanisms:")
-# Obtiene y muestra los mecanismos de firma digital habilitados actualmente
-sigs = oqs.get_enabled_sig_mechanisms()
-pprint(sigs, compact=True)
 
 ##--------------------------------------LECTURA DEL ARCHIVO 1024KB.txt
 
@@ -31,10 +23,6 @@ sigalg = "SPHINCS+-SHA2-128f-simple"
 # Crea instancias de firma tanto para el firmante como para el verificador
 with oqs.Signature(sigalg) as signer:
     with oqs.Signature(sigalg) as verifier:
-        # Imprime los detalles de la firma para el firmante
-        print("\nSignature details:")
-        pprint(signer.details)
-
         # El firmante genera su par de claves
         signer_public_key = signer.generate_keypair()
 
@@ -44,7 +32,7 @@ with oqs.Signature(sigalg) as signer:
         signature = signer.sign(message)
         finFirma = time.time()
 
-        print("\nEl tiempo para la generación de la firma es:", finFirma - inicioFirma)
+        print("\nEl tiempo para la generación de la firma es:", (finFirma - inicioFirma)*(1000)," [ms]")
 
         # El verificador verifica la firma utilizando el mensaje, la firma y la clave pública del firmante
         # Se mide el tiempo de verificación de la firma
@@ -52,9 +40,9 @@ with oqs.Signature(sigalg) as signer:
         is_valid = verifier.verify(message, signature, signer_public_key)
         finVerificacion =  time.time()
 
-        print("\nEl tiempo para la verificación de la firma es:", finVerificacion - inicioVerificacion)
+        print("\nEl tiempo para la verificación de la firma es:", (finVerificacion - inicioVerificacion)*(1000)," [ms]")
 
-        print("\nEl tiempo total: firmado + verificación de firma es:",(finFirma - inicioFirma) + (finVerificacion - inicioVerificacion))
+        print("\nEl tiempo total: firmado + verificación de firma es:",((finFirma - inicioFirma) + (finVerificacion - inicioVerificacion))*(1000)," [ms]")
 
         # Imprime si la firma es válida o no
-        print("\nValid signature?", is_valid)
+        print("\n¿La firma es válida?\n", is_valid)
